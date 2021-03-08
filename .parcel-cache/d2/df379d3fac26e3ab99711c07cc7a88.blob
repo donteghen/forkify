@@ -1,0 +1,44 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loadRecipe = exports.state = void 0;
+
+var _config = _interopRequireDefault(require("./config.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const state = {
+  recipe: {}
+};
+exports.state = state;
+
+const loadRecipe = async function (id) {
+  try {
+    const res = await fetch(_config.default + `${id}`);
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(`${data.message}, ${res.status}`);
+    }
+
+    let {
+      recipe
+    } = data.data;
+    state.recipe = {
+      cookingTime: recipe.cooking_time,
+      id: recipe.id,
+      image: recipe.image_url,
+      ingredients: recipe.ingredients,
+      publisher: recipe.publisher,
+      title: recipe.title,
+      servings: recipe.servings,
+      sourceUrl: recipe.source_url
+    };
+  } catch (error) {
+    alert(error);
+  }
+};
+
+exports.loadRecipe = loadRecipe;
