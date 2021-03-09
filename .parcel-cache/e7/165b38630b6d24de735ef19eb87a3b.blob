@@ -1,0 +1,52 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.loadSearchResult = exports.loadRecipe = exports.state = void 0;
+
+var _config = require("./config.js");
+
+var _runtime = require("regenerator-runtime/runtime");
+
+var _helper = require("./helper.js");
+
+const state = {
+  recipe: {}
+};
+exports.state = state;
+
+const loadRecipe = async function (id) {
+  try {
+    const url = _config.API_URL + `${id}`;
+    const data = await (0, _helper.getJSON)(url);
+    let {
+      recipe
+    } = data.data;
+    state.recipe = {
+      cookingTime: recipe.cooking_time,
+      id: recipe.id,
+      image: recipe.image_url,
+      ingredients: recipe.ingredients,
+      publisher: recipe.publisher,
+      title: recipe.title,
+      servings: recipe.servings,
+      sourceUrl: recipe.source_url
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.loadRecipe = loadRecipe;
+
+const loadSearchResult = async function (query) {
+  try {
+    const data = await (0, _helper.getJSON)(`${_config.API_URL}?search=${query}`);
+    console.log(data);
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.loadSearchResult = loadSearchResult;

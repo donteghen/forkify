@@ -1,0 +1,26 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// parcel2
+class PaginationView extends _view.default {
+  // _parentElement = document.querySelector('.pagination');
+  _generateMarkUp() {
+    const totalPages = Math.ceil(this._data.result.length / this._data.pageSize);
+    console.log(totalPages);
+  }
+
+}
+
+var _default = new PaginationView();
+
+exports.default = _default;

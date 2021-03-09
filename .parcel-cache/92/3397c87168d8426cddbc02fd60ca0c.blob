@@ -1,0 +1,12 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PAGE_SIZE = exports.TIME_OUT_SECONDS = exports.API_URL = void 0;
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
+exports.API_URL = API_URL;
+const TIME_OUT_SECONDS = 10;
+exports.TIME_OUT_SECONDS = TIME_OUT_SECONDS;
+const PAGE_SIZE = 10;
+exports.PAGE_SIZE = PAGE_SIZE;
