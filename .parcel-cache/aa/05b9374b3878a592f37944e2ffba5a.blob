@@ -1,0 +1,139 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.uploadRecipe = exports.deleteBookmark = exports.addBookmark = exports.updateServings = exports.getPagination = exports.loadSearchResult = exports.loadRecipe = exports.state = void 0;
+
+var _regeneratorRuntime = require("regenerator-runtime");
+
+var _config = require("./config.js");
+
+var _helper = require("./helper.js");
+
+const state = {
+  recipe: {},
+  search: {
+    query: '',
+    result: [],
+    pageSize: _config.PAGE_SIZE,
+    pageNumber: 1
+  },
+  bookmarks: []
+};
+exports.state = state;
+
+const loadRecipe = async function (id) {
+  try {
+    const url = _config.API_URL + `${id}`;
+    const data = await (0, _helper.getJSON)(url);
+    let {
+      recipe
+    } = data.data;
+    state.recipe = {
+      cookingTime: recipe.cooking_time,
+      id: recipe.id,
+      image: recipe.image_url,
+      ingredients: recipe.ingredients,
+      publisher: recipe.publisher,
+      title: recipe.title,
+      servings: recipe.servings,
+      sourceUrl: recipe.source_url
+    };
+
+    if (state.bookmarks.some(bookmark => bookmark.id === id)) {
+      state.recipe.bookmarked = true;
+    } else {
+      state.recipe.bookmarked = false;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.loadRecipe = loadRecipe;
+
+const loadSearchResult = async function (query) {
+  try {
+    const data = await (0, _helper.getJSON)(`${_config.API_URL}?search=${query}`);
+    state.search.query = query;
+    state.search.result = data.data.recipes.map(recipe => {
+      return {
+        id: recipe.id,
+        image: recipe.image_url,
+        publisher: recipe.publisher,
+        title: recipe.title
+      };
+    }); //console.log(state.search)
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.loadSearchResult = loadSearchResult;
+
+const getPagination = function (page = state.search.pageNumber) {
+  state.search.pageNumber = page;
+  const start = (page - 1) * state.search.pageSize;
+  const end = page * state.search.pageSize;
+  return state.search.result.slice(start, end);
+};
+
+exports.getPagination = getPagination;
+
+const updateServings = function (newServings) {
+  console.log(state.recipe.ingredients);
+  state.recipe.ingredients.forEach(ing => {
+    ing.quantity = ing.quantity * newServings / state.recipe.servings;
+  });
+  state.recipe.servings = newServings;
+};
+
+exports.updateServings = updateServings;
+
+const addBookmark = function (recipe) {
+  // add to bookmark array
+  state.bookmarks.push(recipe);
+  persistBookmarks(); // persist in local storage
+  // mark curent recipe as bookmarked
+
+  if (recipe.id === state.recipe.id) {
+    state.recipe.bookmarked = true;
+  }
+};
+
+exports.addBookmark = addBookmark;
+
+const deleteBookmark = function (id) {
+  const index = state.bookmarks.find(bookmark => bookmark.id === id);
+  state.bookmarks.splice(index, 1);
+  persistBookmarks(); // persist in local storage
+  // mark curent recipe as not bookmarked
+
+  if (id === state.recipe.id) {
+    state.recipe.bookmarked = false;
+  }
+};
+
+exports.deleteBookmark = deleteBookmark;
+
+const persistBookmarks = function () {
+  localStorage.setItem('Bookmarks', JSON.stringify(state.bookmarks));
+};
+
+const initLocalstorage = function () {
+  const storage = localStorage.getItem('Bookmarks');
+
+  if (storage) {
+    state.bookmarks = JSON.parse(storage);
+  }
+};
+
+initLocalstorage();
+
+const uploadRecipe = async function (newRecipe) {
+  const ingredients = Object.entries(newRecipe).filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '');
+  console.log(ingredients);
+};
+
+exports.uploadRecipe = uploadRecipe;

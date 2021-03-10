@@ -1,0 +1,78 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// parcel2
+class PaginationView extends _view.default {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "_parentElement", document.querySelector('.pagination'));
+  }
+
+  _generateMarkUp() {
+    const totalPages = Math.ceil(this._data.result.length / this._data.pageSize); // page 1 and there are other pages
+
+    if (this._data.pageNumber === 1 && totalPages > 1) {
+      console.log('first', this._data.pageNumber + 1);
+      return `
+            <button class="btn--inline pagination__btn--next">
+                <span>page ${this._data.pageNumber + 1}</span>
+                <svg class="search__icon">
+                <use href="${_icons.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            `;
+    } // last page amongst other pages
+
+
+    if (this._data.pageNumber === totalPages && totalPages > 1) {
+      console.log('last');
+      return `
+            <button class="btn--inline pagination__btn--prev">
+                <svg class="search__icon">
+                <use href="${_icons.default}#icon-arrow-left"></use>
+                </svg>
+                <span>page ${this._data.pageNumber - 1}</span>
+            </button>
+            `;
+    } // between first and last page
+
+
+    if (this._data.pageNumber < totalPages) {
+      console.log('between');
+      return `
+            <button class="btn--inline pagination__btn--prev">
+                <svg class="search__icon">
+                <use href="${_icons.default}#icon-arrow-left"></use>
+                </svg>
+                <span>page ${this._data.pageNumber - 1}</span>
+            </button>
+            <button class="btn--inline pagination__btn--next">
+                <span>page ${this._data.pageNumber + 1}</span>
+                <svg class="search__icon">
+                <use href="${_icons.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+          `;
+    }
+
+    return '';
+  }
+
+}
+
+var _default = new PaginationView();
+
+exports.default = _default;
